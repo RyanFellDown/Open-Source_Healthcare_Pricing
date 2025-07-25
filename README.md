@@ -1,2 +1,21 @@
 # Open-Source_Healthcare_Pricing
-Utilizing publicly available medical datasets, I'm creating an API that finds average billings and patient pricings per Zip Code depending on procedure done. My hope is to expand this into an interactable map that allows patients to move through it, similar to Google Maps, and discover pricings at different locations near them based on procedure done.
+
+## 📌 Summary
+A tool utilizing publically available medical datasets to show patients average costs per procedures in their area.
+
+## 🔧 Tech Stack
+- Python
+- PostgreSQL
+- FastAPI
+- React (Future Implementation)
+
+## 🛠️ Setup
+1. Clone the repository.
+2. Create `.env` with the database config.
+3. Run `data processing/load.py`.
+4. Launch FastAPI with `uvicorn`.
+
+## 📈 Future Additions
+- Frontend filters by map or chart
+- More specific provider locations and pricings
+- User-submitted pricing data (possibly)
