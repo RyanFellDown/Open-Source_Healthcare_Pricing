@@ -1,0 +1,18 @@
+HCPCS Code,Description
+99213,"Office visit, established patient (15–29 mins)"
+99214,"Office visit, established patient (30–39 mins)"
+99203,"Office visit, new patient (30–44 mins)"
+99397,Annual preventive visit (adult)
+71020,"Chest X-ray, 2 views"
+72148,"MRI of lumbar spine, without contrast"
+72141,"MRI of brain, without contrast"
+77067,"Screening mammography, bilateral"
+93000,Electrocardiogram (ECG/EKG) with interpretation
+36415,Routine venipuncture (blood draw)
+80050,General health panel (comprehensive bloodwork)
+85025,"Complete blood count (CBC), automated"
+87804,"Influenza test, rapid"
+90658,Flu shot (trivalent)
+81002,"Urinalysis, non-automated, without microscopy"
+G0439,"Annual wellness visit, established patients"
+J3490,Unclassified drug (placeholder — often custom filled)
