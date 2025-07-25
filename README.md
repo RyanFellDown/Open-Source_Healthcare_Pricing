@@ -1,6 +1,4 @@
 # Open-Source_Healthcare_Pricing
-
-## 📌 Summary
 A tool utilizing publically available medical datasets to show patients average costs per procedures in their area.
 
 ## 🔧 Tech Stack
