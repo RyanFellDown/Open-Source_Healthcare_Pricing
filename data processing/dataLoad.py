@@ -1,16 +1,23 @@
-import pandas as pd
 from sqlalchemy import create_engine
+import pandas as pd
+import psycopg2
+import os
 
 
 #Currently ~9 million rows, takes a long time and strong processing to do this, so only doing around like 200 right now.
 #We're going to keep the Zip Code, visit code, the amount they paid, and the amount the amount medicare wanted to be paid.
-data = pd.read_csv("data/raw/Medicare_Physician_Other_Practitioners_by_Provider_and_Service_2022.csv", usecols=["Rndrng_NPI", "Rndrng_Prvdr_Zip5", "HCPCS_Cd", "HCPCS_Desc", "Tot_Benes", "Tot_Srvcs", "Avg_Sbmtd_Chrg", "Avg_Mdcr_Alowd_Amt", "Avg_Mdcr_Pymt_Amt"], nrows=10000)
-hcpcsCodes = pd.read_csv("data/processed/HCPS Codes - Sheet1.csv")
+baseDirectory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+cmsData = os.path.join(baseDirectory, 'data', 'raw', 'Medicare_Physician_Other_Practitioners_by_Provider_and_Service_2022.csv')
+hcpcsCodesData = os.path.join(baseDirectory, 'data', 'processed', 'HCPS Codes - Sheet1.csv')
+
+
+data = pd.read_csv(cmsData, usecols=["Rndrng_NPI", "Rndrng_Prvdr_Zip5", "HCPCS_Cd", "HCPCS_Desc", "Tot_Benes", "Tot_Srvcs", "Avg_Sbmtd_Chrg", "Avg_Mdcr_Alowd_Amt", "Avg_Mdcr_Pymt_Amt"], nrows=10000)
+hcpcsCodes = pd.read_csv(hcpcsCodesData)
 data["Estimated_Average_Payment"] = data["Avg_Mdcr_Alowd_Amt"] - data["Avg_Mdcr_Pymt_Amt"]
 print(data.shape)
 
 
-#Add the codes to a hashmap and mark with 1 to note they're available. If not found, remove said row.
+#Add the codes to a hashmap, simply noting what each code means in an easily accessible format.
 hcpcsHash = {}
 codeIndex = 0
 for code in hcpcsCodes["HCPCS Code"]:
@@ -62,17 +69,21 @@ zip_stats_df.rename(columns={'Rndrng_NPI': 'provider_count'}, inplace=True)
 print(zip_stats_df[zip_stats_df['provider_count'] >= 3])
 
 
-#4. Create the SQL/Docker database using SQL_Alchemy.
-dbURL = "postgresql://medicare_user:medicare_pass@localhost:5432/medicare_costs"
-engine = create_engine(dbURL)
+#   Now, we've grouped zip codes with respective HCPCS codes. We can add this to the PostgreSQL database.
+conn_string = 'postgresql://postgres:hidden@localhost:5432/postgres'
 
-#5. Push the dataframe to Docker (Postgresql) as SQL table.
-#   Creates SQL table with specific name, using engine, no index, and replaces existing
-#   table if already there.
+db = create_engine(conn_string)
+conn = db.connect()
 
-zip_stats_df.to_sql(
-    name = 'ZIP-Procedure-Statistics',
-    con = engine,
-    index = False,
-    if_exists='replace'
-)
+zip_stats_df.to_sql('zip_stats_df', con=conn, if_exists='replace', index=False)
+conn = psycopg2.connect(conn_string)
+conn.autocommit = True
+cursor = conn.cursor()
+
+sql1 = '''select * from zip_stats_df;'''
+cursor.execute(sql1)
+for i in cursor.fetchall():
+    print(i)
+
+# conn.commit()
+conn.close()
