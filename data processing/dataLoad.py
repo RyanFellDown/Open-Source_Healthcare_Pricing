@@ -30,8 +30,7 @@ for code in hcpcsCodes["HCPCS Code"]:
 data = data.dropna()
 
 
-
-#2. Checking if any Zip codes are incorrect format (either too long, too short, 99999, or 00000)
+#2. Checking if any Zip codes are incorrect format (either 99999 or 00000)
 #   Check if the code in the data is one of the defined HCPCS Codes listed. If not, remove.
 #   Will continue to expand the number of codes available, otherwise this is a limiting factor.
 
